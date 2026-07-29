@@ -1,29 +1,28 @@
+//////////////////////////////////////////////////////////////////////////////////
+/******************************************************************************
+ * Module Name : fifo_memory
+ * Author      : Rohit Kumar Panda
+ * Date        : 29-Jul-2026
+ *
+ * Description :
+ * Dual-port memory block for the asynchronous FIFO.
+ * Supports independent write and read operations using separate clocks.
+ * Data is written and read using the lower ADDRESS_WIDTH bits of the
+ * binary pointers.
+ *
+ * Parameters :
+ *   DATA_WIDTH   : Width of each FIFO data word.
+ *   FIFO_DEPTH   : Number of memory locations.
+ *   ADDRESS_WIDTH: Number of address bits (calculated using $clog2).
+ *
+ ******************************************************************************/
+//////////////////////////////////////////////////////////////////////////////////
+
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 27.07.2026 00:14:10
-// Design Name: 
-// Module Name: fifo_memory
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-
 module fifo_memory #(
 parameter DATA_WIDTH = 16,
-parameter FIF0_DEPTH = 8,
-parameter ADDRESS_WIDTH = $clog2(FIF0_DEPTH))(
+parameter FIFO_DEPTH = 8,
+    parameter ADDRESS_WIDTH = $clog2(FIFO_DEPTH))(
     input [DATA_WIDTH-1:0] data_in , 
     input wr_en , w_clk , full , 
     input [ADDRESS_WIDTH:0]wptr ,
@@ -33,19 +32,22 @@ parameter ADDRESS_WIDTH = $clog2(FIF0_DEPTH))(
     input [ADDRESS_WIDTH:0] rptr , 
     input empty
     );
-//input [15:0] data_in;
-//input wr_en , w_clk , full , r_en , r_clk;
-//output reg [15:0] data_out;
-//input empty;
-//input [3:0] wptr , rptr;
 
-reg [DATA_WIDTH-1:0] fifo[0:FIF0_DEPTH-1];
+// FIFO Memory Array
+reg [DATA_WIDTH-1:0] fifo[0:FIFO_DEPTH-1];
+
+// Write Port
+// Writes data into the FIFO on the rising edge of the write clock
+// when write enable is asserted and the FIFO is not full.
 always @(posedge w_clk)
 begin
     if(wr_en && ~full)
     fifo[wptr[ADDRESS_WIDTH-1:0]] <= data_in;
 end
 
+// Read Port
+// Reads data from the FIFO on the rising edge of the read clock
+// when read enable is asserted and the FIFO is not empty.
 always @(posedge r_clk)
 begin
     if(r_en && ~empty)
