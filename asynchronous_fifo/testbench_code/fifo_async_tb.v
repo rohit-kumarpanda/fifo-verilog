@@ -1,31 +1,36 @@
+//////////////////////////////////////////////////////////////////////////////////
+/******************************************************************************
+ * Module Name : fifo_async_tb
+ * Author      : Rohit Kumar Panda
+ * Date        : 29-Jul-2026
+ *
+ * Description :
+ * Testbench for the parameterized asynchronous FIFO.
+ * Verifies correct FIFO operation using independent read and write clocks.
+ *
+ * Test Cases :
+ *   - Reset functionality
+ *   - Multiple write operations
+ *   - Multiple read operations
+ *   - Full flag assertion
+ *   - Empty flag assertion
+ *   - FIFO overflow protection
+ *   - FIFO underflow protection
+ *   - Asynchronous clock domain operation
+ *
+ ******************************************************************************/
+//////////////////////////////////////////////////////////////////////////////////
+
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 27.07.2026 14:56:16
-// Design Name: 
-// Module Name: fifo_async_tb
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-
 module fifo_async_tb;
+
+// Testbench Signals
 reg [15:0] data_in ;
 reg wr_en , w_clk , wrst_n ;
 reg r_en , r_clk , rrst_n ;
 wire [15:0] data_out;
 
+// Device Under Test (DUT)
 top dut(
     .data_in(data_in),
     .wr_en(wr_en),
@@ -36,10 +41,14 @@ top dut(
     .rrst_n(rrst_n),
     .data_out(data_out)
     );
-    
+
+// Clock Generation
+// Independent write and read clocks for asynchronous FIFO verification.
 always #13 w_clk = ~w_clk;
 always #29 r_clk = ~r_clk;
 
+// Write Task
+// Writes one data word into the FIFO.
 task write_data(input [15:0] d_in);
     begin
         @(posedge w_clk);
@@ -50,6 +59,8 @@ task write_data(input [15:0] d_in);
     end
 endtask
 
+// Read Task
+// Reads one data word from the FIFO.
 task read_data();
     begin
         @(posedge r_clk);
@@ -59,6 +70,7 @@ task read_data();
     end
 endtask
 
+// Test Sequence
 initial begin
     w_clk = 0; r_clk = 0;
     wr_en = 0; r_en = 0;
