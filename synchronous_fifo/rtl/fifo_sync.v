@@ -1,39 +1,63 @@
+/******************************************************************************
+ * Module Name : fifo_sync
+ * Author      : Rohit Kumar Panda
+ * Date        : 29-Jul-2026
+ *
+ * Description :
+ * Parameterized synchronous FIFO implemented in Verilog.
+ * Supports single-clock read and write operations with Full and Empty
+ * flag generation. Intended as a beginner-to-intermediate digital
+ * design project.
+ *
+ * Features :
+ *   - Single clock operation
+ *   - Parameterized data width and FIFO depth
+ *   - Binary read/write pointers
+ *   - Full and Empty status flags
+ *   - Asynchronous active-high reset
+ *
+ * Parameters :
+ *   DATA_WIDTH : Width of each FIFO data word.
+ *   DEPTH      : Number of FIFO entries.
+ *
+ * Inputs :
+ *   clk      : System clock.
+ *   rst      : Active-high asynchronous reset.
+ *   cs       : Chip select.
+ *   wr_en    : Write enable.
+ *   rd_en    : Read enable.
+ *   data_in  : Input data.
+ *
+ * Outputs :
+ *   data_out : Output data.
+ *   full     : FIFO full flag.
+ *   empty    : FIFO empty flag.
+ *
+ ******************************************************************************/
+//////////////////////////////////////////////////////////////////////////////////
+
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 23.07.2026 01:12:59
-// Design Name: 
-// Module Name: fifo_sync
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-
 module fifo_sync(clk , rst , cs , data_in , data_out , wr_en , rd_en , empty , full);
 parameter DEPTH = 8;
 parameter DATA_WIDTH = 16;
-input clk, rst, cs , wr_en , rd_en;
+input clk ; 
+input rst;
+input cs ;
+input wr_en, 
+input rd_en;
 input [DATA_WIDTH-1:0] data_in;
-output empty , full;
+output empty;
+output full;
 output reg [DATA_WIDTH-1:0] data_out;
-
+  
+// FIFO Memory Declaration
 reg [DATA_WIDTH-1:0] fifo[0:DEPTH-1];
 reg [3:0] wr_pointer;
 reg [3:0] rd_pointer;
 
 integer i;
-
+    
+// Write Logic
 always @(posedge clk or posedge rst) begin
     if(rst)begin
         wr_pointer <= 0;
@@ -47,6 +71,7 @@ always @(posedge clk or posedge rst) begin
         end
 end
 
+//READ LOGIC
 always @(posedge clk or posedge rst)
 begin
     if(rst) 
@@ -56,12 +81,12 @@ begin
     end
     else if(cs && rd_en && !empty)begin
         data_out <= fifo[rd_pointer[2:0]];
-//        fifo[rd_pointer[2:0]] <= 1'b0;
         rd_pointer <= rd_pointer + 1'b1;
   
     end
 end
-
+    
+// Status Flag Generation
 assign empty = (rd_pointer == wr_pointer);
 assign full = (rd_pointer == {~wr_pointer[3],wr_pointer[2:0]});
 endmodule
