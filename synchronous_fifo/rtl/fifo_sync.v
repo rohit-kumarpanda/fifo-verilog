@@ -1,7 +1,7 @@
 /******************************************************************************
  * Module Name : fifo_sync
  * Author      : Rohit Kumar Panda
- * Date        : 29-Jul-2026
+ * Date        : 24-Jul-2026
  *
  * Description :
  * Parameterized synchronous FIFO implemented in Verilog.
