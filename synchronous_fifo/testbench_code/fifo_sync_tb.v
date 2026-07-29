@@ -1,25 +1,26 @@
+//////////////////////////////////////////////////////////////////////////////////
+/******************************************************************************
+ * Module Name : fifo_sync_tb
+ * Author      : Rohit Kumar Panda
+ * Date        : 24-Jul-2026
+ *
+ * Description :
+ * Testbench for the parameterized synchronous FIFO.
+ * Verifies FIFO functionality under single-clock operation.
+ *
+ * Test Cases :
+ *   - FIFO reset
+ *   - Write operation
+ *   - Read operation
+ *   - Full flag assertion
+ *   - Empty flag assertion
+ *   - Overflow prevention
+ *   - Underflow prevention
+ *
+ ******************************************************************************/
+//////////////////////////////////////////////////////////////////////////////////
+
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 23.07.2026 12:39:38
-// Design Name: 
-// Module Name: fifo_sync_tb
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-
 module fifo_sync_tb;
 parameter DEPTH = 8;
 parameter DATA_WIDTH = 16;
@@ -28,7 +29,7 @@ reg [DATA_WIDTH-1:0] data_in;
 wire empty , full;
 wire [DATA_WIDTH-1:0] data_out;
 
-
+// DUT Instantiation
 fifo_sync dut(.clk(clk) ,
               .rst(rst),
               .cs(cs),
@@ -39,9 +40,10 @@ fifo_sync dut(.clk(clk) ,
               .full(full),
               .data_out(data_out) );
            
-
+// Clock Generation
 always #5 clk = ~clk;
 
+// Write Task
 task write_data(input [DATA_WIDTH-1:0] d_in);
     begin
         @(posedge clk);
@@ -53,6 +55,7 @@ task write_data(input [DATA_WIDTH-1:0] d_in);
     end
 endtask
 
+// Read Task
 task read_data();
     begin
         @(posedge clk);
@@ -62,6 +65,7 @@ task read_data();
     end
 endtask
 
+// Test Sequence
 initial begin
     clk = 0;
     rst = 1 ; wr_en = 0; rd_en = 0;
