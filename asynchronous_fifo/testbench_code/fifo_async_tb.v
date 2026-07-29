@@ -29,6 +29,8 @@ reg [15:0] data_in ;
 reg wr_en , w_clk , wrst_n ;
 reg r_en , r_clk , rrst_n ;
 wire [15:0] data_out;
+wire empty;
+wire full;
 
 // Device Under Test (DUT)
 top dut(
@@ -39,7 +41,9 @@ top dut(
     .r_en(r_en),
     .r_clk(r_clk),
     .rrst_n(rrst_n),
-    .data_out(data_out)
+    .data_out(data_out),
+    .empty(empty),
+    .full(full)
     );
 
 // Clock Generation

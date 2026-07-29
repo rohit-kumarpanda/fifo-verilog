@@ -27,14 +27,15 @@ parameter FIFO_DEPTH = 8)(
     input [DATA_WIDTH-1 :0] data_in ,
     input wr_en , w_clk , wrst_n ,
     input r_en , r_clk , rrst_n , 
-    output [DATA_WIDTH-1 :0] data_out
+    output [DATA_WIDTH-1 :0] data_out,
+    output empty ,
+    output full
     );
 
 // Local Parameters
 localparam ADDRESS_WIDTH = $clog2(FIFO_DEPTH);
 
 // Internal Signals
-wire empty , full;
 wire [ADDRESS_WIDTH :0] b_wptr , b_rptr ;
 wire [ADDRESS_WIDTH :0] g_wptr , g_rptr ;
 wire [ADDRESS_WIDTH :0] g_rptr_sync , g_wptr_sync;
